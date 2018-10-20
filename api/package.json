@@ -8,8 +8,10 @@
   "license": "",
   "main": "app.js",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.12.3",
     "lodash": "^4.17.5",
+    "mongoose": "^5.3.4",
     "swagger-express-mw": "^0.7.0"
   },
   "devDependencies": {
