@@ -1,14 +1,12 @@
-/**
- * Created by bao.nguyen on Mar. 5, 2017.
- * ./models/item.js
+ /**
+ * Created by bao.nguyen on Sat, Oct, 20
  */
-
 'use strict';
 
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const options = { autoIndex: false, safe: { j: 1, w: 1, wtimeout: 60000 }, timestamps: true };
+const options = { autoIndex: false, timestamps: true };
 
 const Game = new Schema({
   name: { type: String },

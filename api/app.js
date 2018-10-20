@@ -24,7 +24,7 @@ SwaggerExpress.create(config, async (err, swaggerExpress) => {
   //cross domain
   app.use(cors());
   // enable SwaggerUI. E.g. http://host:port/docs/
-  //app.use(swaggerExpress.runner.swaggerTools.swaggerUi());
+  app.use(swaggerExpress.runner.swaggerTools.swaggerUi());
   
   // install middleware
   swaggerExpress.register(app);
