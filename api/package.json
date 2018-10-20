@@ -12,7 +12,7 @@
     "express": "^4.12.3",
     "lodash": "^4.17.5",
     "mongoose": "^5.3.4",
-    "swagger-express-mw": "^0.7.0"
+    "swagger-express-mw": "^0.1.0"
   },
   "devDependencies": {
     "should": "^7.1.0",
