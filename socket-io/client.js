@@ -26,6 +26,7 @@ let gameData = {
   firstPlayerIsNext: false,
   players: null,
   moves: Array(9).fill(''), 
+  winner: '',
 }
 //-----------------
 
@@ -36,7 +37,7 @@ socket.on('connect', () => {
     newGame(socket);
   } else {
     joinGame(socket, gameId);
-    playerMoved(gameId, 3, marker);
+    playerMoved(gameId, 3, marker)
   }
 
 });
@@ -147,7 +148,7 @@ async function saveGame(gameId) {
 function playerMoved(gameId, position, marker) {
   gameData.moves[position] = marker;
   gameData.firstPlayerIsNext = (player == 'Player2') ? true : false;
-  
+
   socket.emit('moved', { 
     _id: gameId,
     moves: gameData.moves, 

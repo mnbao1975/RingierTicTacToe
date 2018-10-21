@@ -159,6 +159,9 @@ definitions:
         type: array
         items:
           type: string
+      winner:
+        description: Containing winning marker (X or O) 
+        type: string
   HelloWorldResponse:
     required:
       - message

@@ -50,10 +50,10 @@ async function joinGame(client, data) {
   const players = data.players;
 
   games = Object.assign(games, {[`${gameId}`]: { players }});
+  games[gameId].state = 'NEW';
+
   client.to(gameId).emit('joined', {...data, socketId: client.id});
-  const res = await axios.put(`${config.apiURL}/games/${gameId}`, {
-    players
-  });
+  const res = await axios.put(`${config.apiURL}/games/${gameId}`, { players });
   
   // Game will be started whenever there are 2 joined players.
   if (Object.keys(games[gameId].players).length == 2) {  
@@ -88,8 +88,41 @@ async function playerMoved(client, data) {
   const firstPlayerIsNext = data.firstPlayerIsNext;
 
   games[gameId].moves = moves;
-  games[gameId].firstPlayerIsNext = firstPlayerIsNext;
 
-  const res = await axios.put(`${config.apiURL}/games/${gameId}`, { moves, firstPlayerIsNext });  
-  client.to(gameId).emit('moved', data);
+  let winner = calculateWinner(moves);
+  if (winner) {
+    games[gameId].state = 'COMPLETED';
+  }
+  games[gameId].firstPlayerIsNext = firstPlayerIsNext;
+  const res = await axios.put(`${config.apiURL}/games/${gameId}`, {
+    moves, 
+    firstPlayerIsNext,
+    winner,
+    state: games[gameId].state
+  });
+
+  client.to(gameId).emit('moved', { ...data, winner, state: games[gameId].state });
+}
+/**
+ * Calculate which marker (X|O)  is the winner
+ * @param {*} moves 
+ */
+function calculateWinner(moves) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (moves[a] && moves[a] === moves[b] && moves[a] === moves[c]) {
+      return moves[a];
+    }
+  }
+  return null;
 }
