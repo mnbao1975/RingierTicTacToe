@@ -5,7 +5,28 @@ import "./App.css";
 import Routes from "./Routes";
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+  
+    this.state = {
+      gameId: '',
+      palyer: '',
+      marker: '',
+    };
+  }
+
+  chosePlayer = (palyer) => {
+    this.setState({
+      palyer,
+      marker: palyer === 'Player1' ? 'X' :'O'    
+    });
+  }
+
   render() {
+    const childProps = {
+      ...this.state,
+      choosePlayer: this.choosePlayer
+    };
     return (
       <div className="App container">
         <Navbar fluid collapseOnSelect>
@@ -16,7 +37,7 @@ class App extends Component {
             <Navbar.Toggle />
           </Navbar.Header>
         </Navbar>
-        <Routes />
+        <Routes childProps={childProps} />
       </div>
     );
   }

@@ -122,7 +122,7 @@ async function restartGame(socket, gameId) {
   }
 }
 /**
- * Load a completed game
+ * Load a game
  * @param {*} socket 
  */
 async function loadGame(socket, gameId) {
@@ -134,7 +134,7 @@ async function loadGame(socket, gameId) {
   }
 }
 /**
- * Save a incompleted game
+ * Save a game
  * @param {*} gameId 
  */
 async function saveGame(gameId) {
