@@ -19,3 +19,16 @@ Code generator (KICKSTARTER CODE)
 NOTEs:
 . Have not handled the player's status yet. So, do not refresh the browser during testing.
 . Reused code from https://reactjs.org/tutorial/tutorial.html
+
+
+Deploy:
+Webapp:
+$ cd web-app
+$ PORT=5000 yarn start
+
+API
+$ cd api && node app.js
+
+Socket
+$ cd socket-io && node app.js
+
