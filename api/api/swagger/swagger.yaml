@@ -153,9 +153,7 @@ definitions:
         type: boolean
       players:
         description: Store the list of players.
-        type: array
-        items:
-          type: string
+        type: object
       moves:
         description: Store the moves of game.
         type: array

@@ -16,3 +16,5 @@ Code generator (KICKSTARTER CODE)
 1. create-react-app for Web App.
 2. swagger for API
 
+NOTEs:
+. Have not handled the player's status yet. So, do not refresh the browser during testing.

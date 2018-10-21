@@ -12,7 +12,7 @@ const Game = new Schema({
   name: { type: String },
   state: { type: String, default: 'NEW' }, //Current game's state
   firstPlayerIsNext: { type: Boolean, default: false },    
-  players: [],
+  players: {},
   moves: [],
 }, options);
 
