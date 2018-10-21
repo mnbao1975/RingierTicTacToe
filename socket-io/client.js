@@ -41,28 +41,28 @@ socket.on('connect', () => {
   }
 
 });
-
+// Handling new player join to the game
 socket.on('joined', data => {
   console.log('New player joined:');
   console.log(data);
 
   gameData.players = data.players;
 });
-
+// Handling 'started' event from socket server
 socket.on('started', data => {
   console.log('Game STARTED:');
   console.log(data);
 
   gameData.state = 'STARTED'  
 });
-
+// Handling the move from other player
 socket.on('moved', data => {
   console.log(data);
 
   gameData.moves = data.moves;
   gameData.firstPlayerIsNext = (data.player == 'Player2') ? true : false;
 });
-
+// Handling 'restarted' event from socket server
 socket.on('restarted', data => {
   console.log(data);
 

@@ -17,15 +17,16 @@ let games = {};
 
 io.on("connection", client => {
   console.log("Player connected");
-
+  // Handeling player joining to the game
   client.on("joined", data => {
     joinGame(client, data);
   });
-
+  // Handeling restarting game
   client.on("restarted", data => {
     restartedGame(client, data);
   });
-
+  // Handeling palyer's move
+  // Each move will be checked for winner also.
   client.on("moved", (data) => {
     playerMoved(client, data);        
   });
