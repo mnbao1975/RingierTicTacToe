@@ -30,6 +30,7 @@ export default class Player extends Component {
     event.preventDefault();
     
     alert(`You chose the ${this.state.palyer} with marker of ${this.state.marker}.`);
+    this.props.history.push("/");
   }
 
   render() {

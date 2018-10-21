@@ -63,7 +63,9 @@ async function joinGame(client, data) {
     games[gameId].state = 'STARTED';
     const res = await axios.put(`${config.apiURL}/games/${gameId}`, {
       state: 'STARTED'
-    });  
+    });
+    // Testing
+    io.emit('started', games[gameId]);  
   }
   console.log(games);
   client.join(gameId); //join game (_id)

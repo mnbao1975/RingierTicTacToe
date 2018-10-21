@@ -11,8 +11,12 @@ class App extends Component {
     this.state = {
       gameId: '',
       palyer: '',
-      marker: '',
+      marker: '',      
     };
+  }
+  
+  componentDidMount() {
+
   }
 
   chosePlayer = (palyer) => {

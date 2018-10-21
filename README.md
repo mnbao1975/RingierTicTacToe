@@ -17,8 +17,9 @@ Code generator (KICKSTARTER CODE)
 2. swagger for API
 
 NOTEs:
-. Have not handled the player's status yet. So, do not refresh the browser during testing.
+. Have not handled the player's status yet. So, do not refresh the browser or restart servers (API or Socket IO ones)during testing.
 . Reused code from https://reactjs.org/tutorial/tutorial.html
+. Reused css code from https://codepen.io/shammadahmed/pen/JOWEGW for designing game board. 
 
 
 Deploy:
