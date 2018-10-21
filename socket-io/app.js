@@ -124,5 +124,5 @@ function calculateWinner(moves) {
       return moves[a];
     }
   }
-  return null;
+  return '';
 }
