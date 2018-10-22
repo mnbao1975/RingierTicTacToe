@@ -1,15 +1,15 @@
 ## Architecture
 In general, the technical architecture for this game has 3 parts (services) as following:
 
-- Web fontend, it is based on ReactJS. I will connection API endpoits to manipulate database. I also connect with Socket IO service in order to allow players exchange data in realtime.
-- Rest API, it is build with Swagger tool so that we can design API specs before implementing API enpoints. See http://localhost:3000/docs/#/default for cheching API endpoints.
+- Web fontend, it is based on ReactJS. It will connect to API endpoits to manipulate database. It also connect to Socket IO service in order to allow players exchange data in realtime.
+- Rest API, it is build with Swagger tool so that we can design API specs before implementing API enpoints. See http://localhost:3000/docs/#/default for cheching API endpoints doc.
 - Socket IO service, it is build for exchanging data in realtime between multiple players during playing game such synching player's movement on game board among players.
 
 And, the above services are runing seperately.
 
 ## Tech Stack
 
-There technical stack used for this game are:
+There technical stack used for this game as following:
 
 - React
 - Bootstrap
@@ -47,17 +47,17 @@ Start MongoDB locally
 
 ## TEST
 - Open this link http://localhost:5000 on two browsers.
-- On the first browers, tap on the "+ Create a new game".
-- On the second window, please refresh it to see the new game just creatd by the first browser.
-- Those two browser will let you know that the game is started so that the 2 players can start to play the game.
-- Every movement of a player will be synced to the other browser in realtime.
-- When there is the winner, the two browser will be get informed immedately.
-- The completed games can be loaded, but the saved can not continue to played (need to be improved). 
+- On the first browsers, the first player taps on the "+ Create a new game".
+- On the second browser, the second player need to refresh it to see the new game just creatd by the first player.
+- Those two browser will let you know that the game is started. And, the 2 players can start to play the game together.
+- Every movement of a player will be synced to the other player's browser in realtime.
+- When there is a winner, the two browsers will be get informed immedately.
+- The completed games can be loaded, but the saved one can not be continued to playe again (need to be improved). 
 
 ## NOTEs:
 During testing the game.
-- Please try to complete the game. If one of players move to other screen, the game's state is persistent. But, it cannot replay again. 
-- Please do NOT restart any service (API, Socket IO or Web fontend) or refresh any browser.
+- Please stay on the game board and try to complete the game. If one of players leaves the current page, the game's state is persistent. But, it cannot be continued again (need to be improved). 
+- Please do NOT restart any service (API, Socket IO or Web fontend) or refresh any browser (need to be improved).
 - Reused code from https://reactjs.org/tutorial/tutorial.html
 - Reused css code from https://codepen.io/shammadahmed/pen/JOWEGW for designing game board. 
 
