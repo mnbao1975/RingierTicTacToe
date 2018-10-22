@@ -3,7 +3,6 @@ import socketIOClient from "socket.io-client";
 import axios from "axios";
 
 import config from "../config";
-import Box from "../components/Box";
 import "./NewGame.css";
 
 export default class NewGame extends Component {
@@ -16,7 +15,7 @@ export default class NewGame extends Component {
       player: '', 
       next: '',
       players: null,
-      moves: Array(9).fill(''),
+      moves: [],
       winner: '',
       state: '',
       socketURL: config.socket.URL
@@ -70,24 +69,7 @@ export default class NewGame extends Component {
       console.error(error);
     }
   }
-  /**
-   * Handle rendering box
-   * @param {*} i 
-   */
-  renderBox(i) {
-    return (
-      <Box 
-        value={this.state.moves[i]}
-        onClick={() => this.handleClick(i)} 
-      />
-    );
-  }
-  /**
-   * Handle on click action
-   */
-  handleClick(i) {
-    alert('work: ' + i);
-  }
+
   render() {    
     return (    
       <div>
@@ -95,16 +77,16 @@ export default class NewGame extends Component {
         <h4>Game name: {this.state.name}</h4>
         <h4>Game state: {this.state.state}</h4>
         <h4>Next move: {this.state.next}</h4>
-        <div class="game-board">
-          {this.renderBox(0)}
-          {this.renderBox(1)}
-          {this.renderBox(2)}
-          {this.renderBox(3)}
-          {this.renderBox(4)}
-          {this.renderBox(5)}
-          {this.renderBox(6)}
-          {this.renderBox(7)}
-          {this.renderBox(8)}
+        <div class="game-board">                
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
+          <div class="box"></div>
         </div>
       </div>
     );
