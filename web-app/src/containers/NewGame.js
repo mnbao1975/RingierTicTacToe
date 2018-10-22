@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import socketIOClient from "socket.io-client";
+import axios from "axios";
+
 import config from "../config";
 import "./NewGame.css";
 
@@ -8,6 +10,7 @@ export default class NewGame extends Component {
     super(props);
 
     this.state = {
+      gameData: {},
       socketURL: config.socket.URL
     };
   }
@@ -16,33 +19,33 @@ export default class NewGame extends Component {
     //console.log(this.props.player);
     const { socketURL } = this.state;
     const socket = socketIOClient(socketURL);
+
+    socket.on('connect', () => {
+      //console.log('Connected');      
+      this.newGame(socket);    
+    });
+
     socket.on("started", data => console.log(data));
   }
 
-  validateForm() {
-    return this.state.content.length > 0;
-  }
+  /**
+   * Request API for a new game.
+   */
+  async newGame(socket) {
+    try {
+      let players = { [this.props.player]: socket.id };
+      const res = await axios.post(`${config.api.URL}/games`, {
+        name: 'Game R_' + Math.floor(Math.random() * 1000) + 1,
+        players
+      }); 
+      socket.emit('joined', { _id: res.data._id, players });
 
-  handleChange = event => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
-  }
-
-  handleFileChange = event => {
-    this.file = event.target.files[0];
-  }
-
-  handleSubmit = async event => {
-    event.preventDefault();
-
-    if (this.file && this.file.size > config.MAX_ATTACHMENT_SIZE) {
-      alert(`Please pick a file smaller than ${config.MAX_ATTACHMENT_SIZE/1000000} MB.`);
-      return;
+      this.setState({ gameData: { players }});
+    } catch (error) {
+      console.error(error);
     }
-
-    this.setState({ isLoading: true });
   }
+
 
   render() {    
     return (    

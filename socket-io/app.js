@@ -60,12 +60,14 @@ async function joinGame(client, data) {
   if (Object.keys(games[gameId].players).length == 2) {  
     console.log('Game started');
     io.in(gameId).emit('started', 'The game starts now.');
+    client.emit('started', 'The game starts now.'); // Ensure the sender will receive it too.
     games[gameId].state = 'STARTED';
     const res = await axios.put(`${config.apiURL}/games/${gameId}`, {
       state: 'STARTED'
     });
+
     // Testing
-    io.emit('started', games[gameId]);  
+    io.emit('started', games[gameId]);      
   }
   console.log(games);
   client.join(gameId); //join game (_id)
