@@ -10,25 +10,22 @@ class App extends Component {
   
     this.state = {
       gameId: '',
-      palyer: '',
-      marker: '',      
+      palyer: 'Player1',
+      marker: 'O',      
     };
   }
   
-  componentDidMount() {
-
-  }
-
   chosePlayer = (palyer) => {
     this.setState({
-      palyer,
-      marker: palyer === 'Player1' ? 'X' :'O'    
+      palyer,      
+      marker: palyer === 'Player1' ? 'O' :'X'    
     });
   }
 
   render() {
     const childProps = {
-      ...this.state,
+      player: this.state.palyer,
+      marker: this.state.marker,
       choosePlayer: this.choosePlayer
     };
     return (

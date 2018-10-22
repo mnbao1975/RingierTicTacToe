@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import socketIOClient from "socket.io-client";
 import config from "../config";
 import "./NewGame.css";
@@ -14,6 +13,7 @@ export default class NewGame extends Component {
   }
 
   componentDidMount() {
+    //console.log(this.props.player);
     const { socketURL } = this.state;
     const socket = socketIOClient(socketURL);
     socket.on("started", data => console.log(data));
@@ -44,10 +44,10 @@ export default class NewGame extends Component {
     this.setState({ isLoading: true });
   }
 
-  render() {
-    return (
+  render() {    
+    return (    
       <div>
-        <h2>Your marker: </h2>
+        <h2>Your marker: {this.props.marker}</h2>
         <h4>Next move: </h4>
         <div class="game-board">                
           <div class="box"></div>

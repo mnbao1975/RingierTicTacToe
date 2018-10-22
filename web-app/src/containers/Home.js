@@ -17,13 +17,10 @@ export default class Home extends Component {
   }
 
   async componentDidMount() {
-    if (!this.props.isAuthenticated) {
-      return;
-    }
-  
+    console.log(this.props.player);
     try {
-      const games = await this.games();
-      this.setState({ games });
+      const res = await this.games();
+      this.setState({ games: res.data });
     } catch (e) {
       alert(e);
     }
