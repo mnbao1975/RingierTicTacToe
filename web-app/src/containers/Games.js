@@ -11,12 +11,45 @@ export default class NewGame extends Component {
 
     this.state = {
       gameData: {},
+      marker: '', // Your marker
       socketURL: config.socket.URL
     };
   }
 
   componentDidMount() {
+    const { socketURL } = this.state;
+    const socket = socketIOClient(socketURL);
 
+    socket.on('connect', () => {
+      //console.log('Connected');      
+      this.joinGame(socket, this.props.match.params.id);    
+    });
+
+    socket.on("started", data => console.log(data));
+  }
+  /**
+   * Join to a incompleted game (new/saved).
+   * @param {*} socket 
+   */
+  async joinGame(socket, gameId) {
+    try {
+      const res = await axios.get(`${config.apiURL}/games/${gameId}`);
+      const marker = res.data.marker; // The choosen marker of Player1
+
+      if (marker === 'O') {
+        this.setState({ gameData: {marker: 'X', player: 'Play2'} });
+      }
+      let moves = res.data.moves;
+      let players = { ...res.data.players, [this.state.player]: socket.id };
+      socket.emit('joined', { _id: gameId, joinedPlayer: this.state.player, players });
+
+      this.setState({
+        gameData: { players, moves }
+      });
+    } catch (error) {
+      alert('Cannot join game');
+      console.error(error);
+    }
   }
 
   render() {    

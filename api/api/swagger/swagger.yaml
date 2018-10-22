@@ -151,6 +151,12 @@ definitions:
       firstPlayerIsNext:
         description: Indicating whether the 1st player is the next one.
         type: boolean
+      marker:
+        description: Indicating the marker is choosen by the first player.
+        type: string
+      next:
+        description: Indicating the next marker.
+        type: string
       players:
         description: Store the list of players.
         type: object

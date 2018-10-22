@@ -11,7 +11,9 @@ const options = { autoIndex: false, timestamps: true };
 const Game = new Schema({
   name: { type: String },
   state: { type: String, default: 'NEW' }, //Current game's state
-  firstPlayerIsNext: { type: Boolean, default: false },    
+  marker: { type: String }, // The current marker is choosen by the first player
+  player: { type: String }, // Current player just joined
+  next: { type: String }, // Next marker will be in turn
   players: {},
   moves: [],
 }, options);
