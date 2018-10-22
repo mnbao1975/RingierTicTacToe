@@ -9,12 +9,14 @@ export default class NewGame extends Component {
   constructor(props) {
     super(props);
 
+    // Default data for new game.
     this.state = {
       name: 'Game R_' + Math.floor(Math.random() * 1000) + 1,
       marker: 'O',
       player: 'Player1', 
       next: 'O',
       players: null,
+      state: 'NEW',
       socketURL: config.socket.URL
     };
   }
@@ -28,9 +30,18 @@ export default class NewGame extends Component {
       this.newGame(socket);    
     });
 
-    socket.on("started", data => console.log(data));
+    socket.on("started", data => this.startGame(socket, data));
   }
-
+  /**
+   * Game is now ready to start
+   * @param {*} socket 
+   */
+  startGame(socket, data) {
+    //console.log(data);
+    this.setState({
+      state: data.state
+    });
+  }
   /**
    * Request API for a new game.
    */
@@ -40,10 +51,6 @@ export default class NewGame extends Component {
       this.setState({ players });
       
       let { name, marker, player, next } = this.state;      
-      console.log({ 
-        name, marker, player, next, players
-      });
-
       const res = await axios.post(`${config.api.URL}/games`, { 
         name, marker, player, next, players
       }); 
@@ -59,6 +66,8 @@ export default class NewGame extends Component {
     return (    
       <div>
         <h2>Your marker: {this.state.marker}</h2>
+        <h4>Game name: {this.state.name}</h4>
+        <h4>Game state: {this.state.state}</h4>
         <h4>Next move: {this.state.next}</h4>
         <div class="game-board">                
           <div class="box"></div>

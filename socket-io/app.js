@@ -48,19 +48,19 @@ http.listen(config.port, () => {
  */
 async function joinGame(client, data) {
   const gameId = data._id;
-  const players = data.players;
+  const { players, marker, player } = data;
 
   games = Object.assign(games, {[`${gameId}`]: { players }});
   games[gameId].state = 'NEW';
 
   client.to(gameId).emit('joined', {...data, socketId: client.id});
-  const res = await axios.put(`${config.apiURL}/games/${gameId}`, { players });
+  const res = await axios.put(`${config.apiURL}/games/${gameId}`, { players, marker, player });
   
   // Game will be started whenever there are 2 joined players.
   if (Object.keys(games[gameId].players).length == 2) {  
     console.log('Game started');
-    io.in(gameId).emit('started', 'The game starts now.');
-    client.emit('started', 'The game starts now.'); // Ensure the sender will receive it too.
+    io.in(gameId).emit('started', {state: 'STARTED'});
+    client.emit('started', {state: 'STARTED'}); // Ensure the sender will receive it too.
     games[gameId].state = 'STARTED';
     const res = await axios.put(`${config.apiURL}/games/${gameId}`, {
       state: 'STARTED'

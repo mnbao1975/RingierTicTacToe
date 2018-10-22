@@ -16,7 +16,6 @@ export default class Home extends Component {
   }
 
   async componentDidMount() {
-    console.log(this.props.player);
     try {
       const res = await this.games();
       this.setState({ games: res.data });

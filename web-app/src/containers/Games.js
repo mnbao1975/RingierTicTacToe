@@ -10,8 +10,14 @@ export default class NewGame extends Component {
     super(props);
 
     this.state = {
-      gameData: {},
-      marker: '', // Your marker
+      name: '',
+      marker: '',
+      player: '', 
+      next: '',
+      players: null,
+      moves: [],
+      winner: '',
+      state: '',
       socketURL: config.socket.URL
     };
   }
@@ -21,11 +27,20 @@ export default class NewGame extends Component {
     const socket = socketIOClient(socketURL);
 
     socket.on('connect', () => {
-      //console.log('Connected');      
+      console.log('this.props.match.params.id');      
       this.joinGame(socket, this.props.match.params.id);    
     });
 
-    socket.on("started", data => console.log(data));
+    socket.on("started", data => this.startGame(socket, data));
+  }
+  /**
+   * Game is now ready to start
+   * @param {*} socket 
+   */
+  startGame(socket, data) {
+    this.setState({
+      state: data.state
+    });
   }
   /**
    * Join to a incompleted game (new/saved).
@@ -33,19 +48,22 @@ export default class NewGame extends Component {
    */
   async joinGame(socket, gameId) {
     try {
-      const res = await axios.get(`${config.apiURL}/games/${gameId}`);
-      const marker = res.data.marker; // The choosen marker of Player1
-
+      const res = await axios.get(`${config.api.URL}/games/${gameId}`);
+      let { name, marker, player, players, moves, next, winner, state } = res.data;
+      
       if (marker === 'O') {
-        this.setState({ gameData: {marker: 'X', player: 'Play2'} });
-      }
-      let moves = res.data.moves;
-      let players = { ...res.data.players, [this.state.player]: socket.id };
-      socket.emit('joined', { _id: gameId, joinedPlayer: this.state.player, players });
+        marker = 'X';
+        player = 'Player2';
+      }   
+      players = { ...res.data.players, [player]: socket.id };
+      
+      // Load game
+      this.setState({ name, marker, player, players, moves, next, winner, state });
 
-      this.setState({
-        gameData: { players, moves }
-      });
+      if (state !== 'NEW') { // Just allow to join a new game.
+        return;
+      }
+      socket.emit('joined', { _id: gameId, joinedPlayer: player, players, marker });
     } catch (error) {
       alert('Cannot join game');
       console.error(error);
@@ -55,8 +73,10 @@ export default class NewGame extends Component {
   render() {    
     return (    
       <div>
-        <h2>Your marker: {this.props.marker}</h2>
-        <h4>Next move: </h4>
+        <h2>Your marker: {this.state.marker}</h2>
+        <h4>Game name: {this.state.name}</h4>
+        <h4>Game state: {this.state.state}</h4>
+        <h4>Next move: {this.state.next}</h4>
         <div class="game-board">                
           <div class="box"></div>
           <div class="box"></div>

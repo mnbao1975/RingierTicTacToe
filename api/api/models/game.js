@@ -16,6 +16,7 @@ const Game = new Schema({
   next: { type: String }, // Next marker will be in turn
   players: {},
   moves: [],
+  winner: { type: String },
 }, options);
 
 /**
