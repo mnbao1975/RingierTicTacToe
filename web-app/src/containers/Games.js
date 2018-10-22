@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Button } from 'react-bootstrap';
 import socketIOClient from "socket.io-client";
 import axios from "axios";
 
@@ -11,6 +12,7 @@ export default class NewGame extends Component {
     super(props);
 
     this.state = {
+      gameId: '',
       name: '',
       marker: '',
       player: '', 
@@ -19,7 +21,8 @@ export default class NewGame extends Component {
       moves: Array(9).fill(''),
       winner: '',
       state: '',
-      socketURL: config.socket.URL
+      socketURL: config.socket.URL,
+      socket: null
     };
   }
 
@@ -29,10 +32,30 @@ export default class NewGame extends Component {
 
     socket.on('connect', () => {
       console.log('this.props.match.params.id');      
-      this.joinGame(socket, this.props.match.params.id);    
+      this.joinGame(socket, this.props.match.params.id);
+      
+      this.setState({
+        gameId: this.props.match.params.id,
+        socket
+      });          
     });
 
     socket.on("started", data => this.startGame(socket, data));
+
+    socket.on("moved", data => this.playerMoved(socket, data));
+  }
+  /**
+   * 
+   */
+  playerMoved(socket, data) {
+    console.log('Player moved:');
+    console.log(data.moves);    
+    this.setState({
+      state: data.state,
+      winner: data.winner,
+      next: data.next,
+      moves: data.moves
+    });
   }
   /**
    * Game is now ready to start
@@ -86,15 +109,38 @@ export default class NewGame extends Component {
    * Handle on click action
    */
   handleClick(i) {
-    alert('work: ' + i);
+    let { socket, moves, next, marker, player, state } = this.state;
+    if(moves[i] || (next !== marker) || (state !== 'STARTED') ) {
+      return;
+    }
+    
+    moves[i] = marker;
+    next = marker === 'O' ? 'X' : 'O';
+    this.setState({ moves, next });
+
+    socket.emit('moved', { 
+      _id: this.state.gameId,
+      moves,
+      player,
+      next,
+    });    
   }
-  render() {    
+  /**
+   * Reset games
+   */
+  handleReset() {
+
+  }
+  
+  render() {
+    let currState = this.state.winner ? 'Completed! Winner is ' + this.state.winner : this.state.state;    
     return (    
       <div>
         <h2>Your marker: {this.state.marker}</h2>
         <h4>Game name: {this.state.name}</h4>
-        <h4>Game state: {this.state.state}</h4>
+        <h4>Game state: {currState}</h4>
         <h4>Next move: {this.state.next}</h4>
+        <Button>Reset</Button>
         <div class="game-board">
           {this.renderBox(0)}
           {this.renderBox(1)}

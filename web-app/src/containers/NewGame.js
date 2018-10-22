@@ -3,6 +3,7 @@ import socketIOClient from "socket.io-client";
 import axios from "axios";
 
 import config from "../config";
+import Box from "../components/Box";
 import "./NewGame.css";
 
 export default class NewGame extends Component {
@@ -11,13 +12,17 @@ export default class NewGame extends Component {
 
     // Default data for new game.
     this.state = {
+      gameId: '',
       name: 'Game R_' + Math.floor(Math.random() * 1000) + 1,
       marker: 'O',
       player: 'Player1', 
       next: 'O',
       players: null,
       state: 'NEW',
-      socketURL: config.socket.URL
+      winner: '',
+      moves: Array(9).fill(''),
+      socketURL: config.socket.URL,
+      socket: null
     };
   }
 
@@ -27,10 +32,26 @@ export default class NewGame extends Component {
 
     socket.on('connect', () => {
       //console.log(this.state);            
-      this.newGame(socket);    
+      this.newGame(socket);
+      this.setState({ socket });
     });
 
     socket.on("started", data => this.startGame(socket, data));
+
+    socket.on("moved", data => this.playerMoved(socket, data));
+  }
+  /**
+   * 
+   * @param {*} socket 
+   * @param {*} data 
+   */
+  playerMoved(socket, data) {
+    this.setState({
+      state: data.state,
+      winner: data.winner,
+      next: data.next,
+      moves: data.moves
+    });
   }
   /**
    * Game is now ready to start
@@ -53,32 +74,65 @@ export default class NewGame extends Component {
       let { name, marker, player, next } = this.state;      
       const res = await axios.post(`${config.api.URL}/games`, { 
         name, marker, player, next, players
-      }); 
-      socket.emit('joined', { _id: res.data._id, players });      
-      
+      });     
+      socket.emit('joined', { _id: res.data._id, players });            
+      this.setState({ gameId: res.data._id });
     } catch (error) {
       console.error(error);
     }
   }
 
+  /**
+   * Handle rendering box
+   * @param {*} i 
+   */
+  renderBox(i) {
+    return (
+      <Box 
+        value={this.state.moves[i]}
+        onClick={() => this.handleClick(i)} 
+      />
+    );
+  }
+  /**
+   * Handle on click action
+   */
+  handleClick(i) {
+    let { socket, moves, next, marker, player, state } = this.state;
+    if(moves[i] || (next !== marker) || (state !== 'STARTED') ) {
+      return;
+    }
+    
+    moves[i] = marker;
+    next = marker === 'O' ? 'X' : 'O';
+    this.setState({ moves, next });
 
-  render() {    
+    socket.emit('moved', { 
+      _id: this.state.gameId,
+      moves,
+      player,
+      next,
+    });    
+  }
+
+  render() {
+    let currState = this.state.winner ? 'Completed! Winner is ' + this.state.winner : this.state.state;
     return (    
       <div>
         <h2>Your marker: {this.state.marker}</h2>
         <h4>Game name: {this.state.name}</h4>
-        <h4>Game state: {this.state.state}</h4>
+        <h4>Game state: {currState}</h4>
         <h4>Next move: {this.state.next}</h4>
         <div class="game-board">                
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
-          <div class="box"></div>
+          {this.renderBox(0)}
+          {this.renderBox(1)}
+          {this.renderBox(2)}
+          {this.renderBox(3)}
+          {this.renderBox(4)}
+          {this.renderBox(5)}
+          {this.renderBox(6)}
+          {this.renderBox(7)}
+          {this.renderBox(8)}
         </div>
       </div>
     );

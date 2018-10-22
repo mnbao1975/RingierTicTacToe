@@ -89,24 +89,30 @@ function restartedGame(client, data) {
  */
 async function playerMoved(client, data) {  
   const gameId = data._id;
+  //const { moves, next, player } = data;
   const moves = data.moves;
-  const firstPlayerIsNext = data.firstPlayerIsNext;
+  const next = data.next;
+  const player = data.player;
 
   games[gameId].moves = moves;
+  games[gameId].next = next;
 
   let winner = calculateWinner(moves);
   if (winner) {
     games[gameId].state = 'COMPLETED';
+    // Ensure current player knows that he is the winner
+    client.emit('moved', { ...data, winner, state: games[gameId].state });
   }
-  games[gameId].firstPlayerIsNext = firstPlayerIsNext;
+  
   const res = await axios.put(`${config.apiURL}/games/${gameId}`, {
+    player,
     moves, 
-    firstPlayerIsNext,
+    next,
     winner,
     state: games[gameId].state
   });
 
-  client.to(gameId).emit('moved', { ...data, winner, state: games[gameId].state });
+  client.to(gameId).emit('moved', { ...data, winner, state: games[gameId].state });  
 }
 /**
  * Calculate which marker (X|O)  is the winner
