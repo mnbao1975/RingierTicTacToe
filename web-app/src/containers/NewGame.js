@@ -35,6 +35,7 @@ export default class NewGame extends Component {
       //console.log(this.state);            
       this.newGame(socket);
       this.setState({ socket });
+    //});
     });
 
     socket.on("started", data => this.startGame(socket, data));
@@ -71,14 +72,15 @@ export default class NewGame extends Component {
    */
   async newGame(socket) {    
     try {
-      let players = { [this.state.player]: socket.id };
+      //let players = { [this.state.player]: socket.id };
+      let players = { [socket.id]: this.state.player };
       this.setState({ players });
       
-      let { name, marker, player, next } = this.state;      
+      let { name, marker, player, next, state } = this.state;      
       const res = await axios.post(`${config.api.URL}/games`, { 
         name, marker, player, next, players
       });     
-      socket.emit('joined', { _id: res.data._id, players });            
+      socket.emit('joined', { _id: res.data._id, players, state });            
       this.setState({ gameId: res.data._id });
     } catch (error) {
       console.error(error);

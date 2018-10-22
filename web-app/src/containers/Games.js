@@ -31,7 +31,6 @@ export default class NewGame extends Component {
     const socket = socketIOClient(socketURL);
 
     socket.on('connect', () => {
-      console.log('this.props.match.params.id');      
       this.joinGame(socket, this.props.match.params.id);
       
       this.setState({
@@ -81,15 +80,16 @@ export default class NewGame extends Component {
         marker = 'X';
         player = 'Player2';
       }   
-      players = { ...res.data.players, [player]: socket.id };
-      
+      //players = { ...res.data.players, [player]: socket.id };
+      players = { ...res.data.players, [socket.id]: player };
+
       // Load game
       this.setState({ name, marker, player, players, moves, next, winner, state });
 
       if (state !== 'NEW') { // Just allow to join a new game or load a game.
         return;
       }
-      socket.emit('joined', { _id: gameId, joinedPlayer: player, players, marker });
+      socket.emit('joined', { _id: gameId, joinedPlayer: player, players, marker, state });
     } catch (error) {
       alert('Cannot join game');
       console.error(error);

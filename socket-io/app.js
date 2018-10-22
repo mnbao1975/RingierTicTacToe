@@ -13,12 +13,15 @@ const io = require("socket.io")(http);
 /**
  * Store all games in memory for faster processing
  */
-let games = {}; 
+let games = {};
+let connections = {}; 
 
 io.on("connection", client => {
   console.log("Player connected");
   // Handeling player joining to the game
   client.on("joined", data => {
+    // Which game id the client (socket id) is conneting to.
+    connections[client.id] = data._id;
     joinGame(client, data);
   });
   // Handeling restarting game
@@ -31,15 +34,30 @@ io.on("connection", client => {
     playerMoved(client, data);        
   });
 
-  client.on("disconnect", () => {    
-    //console.log("Client disconnected");
-    io.emit('disconnected', client.id);
+  client.on("disconnect", () => {
+    playerDisconnected(client);    
   });
+
 });
 
 http.listen(config.port, () => {
   console.log(`Socket server is listening on port: ${ config.port }`);
 });
+/**
+ * 
+ * @param {*} client 
+ */
+async function playerDisconnected(client) {
+    //console.log("Client disconnected");
+    let gameId = connections[client.id];
+    _.unset(games, `${gameId}.players.${client.id}`);
+
+    let players = games[gameId].players;
+    io.emit('disconnected', { _id: gameId, players });
+    console.log(players);
+
+    // Update db
+}
 /**
  * Player joins to a game room (_id)
  * The game will be started whenever there are 2 players in the room
@@ -48,10 +66,10 @@ http.listen(config.port, () => {
  */
 async function joinGame(client, data) {
   const gameId = data._id;
-  const { players, marker, player } = data;
+  const { players, marker, player, state } = data;
 
   games = Object.assign(games, {[`${gameId}`]: { players }});
-  games[gameId].state = 'NEW';
+  games[gameId].state = state;
 
   client.to(gameId).emit('joined', {...data, socketId: client.id});
   const res = await axios.put(`${config.apiURL}/games/${gameId}`, { players, marker, player });
@@ -77,10 +95,11 @@ async function joinGame(client, data) {
  * @param {*} client 
  * @param {*} data 
  */
-function restartedGame(client, data) {
+async function restartedGame(client, data) {
   const gameId = data._id;
   games[gameId].moves = [];
   client.to(gameId).emit('restarted', { _id: gameId });
+  const res = await axios.put(`${config.apiURL}/games/${gameId}`, { moves: [] });
 }
 /**
  * A player moved
