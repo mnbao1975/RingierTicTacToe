@@ -43,6 +43,8 @@ export default class NewGame extends Component {
     socket.on("started", data => this.startGame(socket, data));
 
     socket.on("moved", data => this.playerMoved(socket, data));
+
+    socket.on('restarted', data => this.setState({ moves: Array(9).fill('') }));
   }
   /**
    * 
@@ -84,7 +86,7 @@ export default class NewGame extends Component {
       // Load game
       this.setState({ name, marker, player, players, moves, next, winner, state });
 
-      if (state !== 'NEW') { // Just allow to join a new game.
+      if (state !== 'NEW') { // Just allow to join a new game or load a game.
         return;
       }
       socket.emit('joined', { _id: gameId, joinedPlayer: player, players, marker });
@@ -126,12 +128,18 @@ export default class NewGame extends Component {
     });    
   }
   /**
-   * Reset games
+   * Restart games
    */
-  handleReset() {
-
+  handleRestart() {        
+    this.setState({
+      moves: Array(9).fill('')
+    });
+    let { socket, gameId } = this.state;
+    socket.emit('restarted', { _id: gameId }); 
   }
-  
+  /**
+  * 
+  */
   render() {
     let currState = this.state.winner ? 'Completed! Winner is ' + this.state.winner : this.state.state;    
     return (    
@@ -140,7 +148,10 @@ export default class NewGame extends Component {
         <h4>Game name: {this.state.name}</h4>
         <h4>Game state: {currState}</h4>
         <h4>Next move: {this.state.next}</h4>
-        <Button>Reset</Button>
+        {this.state.state === 'STARTED' 
+          ? <Button onClick={() => this.handleRestart()}>Restart</Button>
+          : ''
+        }        
         <div class="game-board">
           {this.renderBox(0)}
           {this.renderBox(1)}
