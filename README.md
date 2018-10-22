@@ -52,7 +52,7 @@ Start MongoDB locally
 - Those two browser will let you know that the game is started. And, the 2 players can start to play the game together.
 - Every movement of a player will be synced to the other player's browser in realtime.
 - When there is a winner, the two browsers will be get informed immedately.
-- The completed games can be loaded, but the saved one can not be continued to playe again (need to be improved). 
+- The completed games can be loaded (from the home page, http://localhost:5000), but the saved one can not be continued to playe again (need to be improved). 
 
 ## NOTEs:
 During testing the game.
