@@ -52,9 +52,9 @@ async function playerDisconnected(client) {
     let gameId = connections[client.id];
     _.unset(games, `${gameId}.players.${client.id}`);
 
-    let players = games[gameId].players;
-    io.emit('disconnected', { _id: gameId, players });
-    console.log(players);
+    // let players = games[gameId].players;
+    // io.emit('disconnected', { _id: gameId, players });
+    // console.log(players);
 
     // Update db
 }
@@ -95,8 +95,14 @@ async function joinGame(client, data) {
  * @param {*} client 
  * @param {*} data 
  */
-async function restartedGame(client, data) {
+async function restartedGame(client, data) {  
   const gameId = data._id;
+  
+  // No cached game.
+  if (!games[gameId]) {
+    return;
+  }
+  
   games[gameId].moves = [];
   client.to(gameId).emit('restarted', { _id: gameId });
   const res = await axios.put(`${config.apiURL}/games/${gameId}`, { moves: [] });
